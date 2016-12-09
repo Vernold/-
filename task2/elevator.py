@@ -162,7 +162,6 @@ def elevator_process(env):
 for i in range(NUM_PEOPLE):
     env.process(elevator_process(env))
 
-
 env.run(until=1200)
 
 stat_trip_time = np.array(stat_trip_time)
