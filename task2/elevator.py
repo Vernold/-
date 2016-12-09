@@ -6,9 +6,7 @@ CAPACITY = 10
 NUM_ELEVATORS = 6
 NUM_FLOORS = 8
 NUM_PEOPLE = 300
-
 FREQUENCY = 30
-
 MODE = True
 
 env = simpy.Environment()
