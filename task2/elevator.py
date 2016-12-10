@@ -5,8 +5,10 @@ import numpy as np
 CAPACITY = 10
 NUM_ELEVATORS = 6
 NUM_FLOORS = 8
-NUM_PEOPLE = 300
-FREQUENCY = 30
+NUM_PEOPLE = 500
+
+FREQUENCY = 100
+
 MODE = True
 
 env = simpy.Environment()
@@ -18,12 +20,12 @@ names = ['Dmitry', 'Sergey', 'Alex', 'Nikita', 'Denis',
          'Misha', 'Maxim', 'Grisha', 'Yuri']
 
 # Timeouts
-OPEN = 4
-CLOSE = 4
+OPEN = 3
+CLOSE = 3
 SPEED = 3
 COME_IN = 2
 COME_OUT = 1
-WAIT = 10
+WAIT = 5
 
 # Statistics
 stat_trip_time = []
@@ -85,7 +87,7 @@ def call_elevator(target_floor):
 
 
 def elevator_process(env):
-    yield env.timeout(FREQUENCY)
+    yield env.timeout(randint(0, FREQUENCY))
 
     # New person
     person = Person(names[randint(0, len(names)-1)])
@@ -107,6 +109,7 @@ def elevator_process(env):
     if elevator.state == 'open':
         print (person.name + ' comes in Elevator %d at %d' % (elevator.id, env.now))
         yield env.timeout(COME_IN)
+        stat_wait_time.append(OPEN + wait_time)
         return
 
     # Move to a person
@@ -120,7 +123,7 @@ def elevator_process(env):
     yield env.timeout(OPEN)
     elevator.state = 'open'
 
-    stat_wait_time.append(OPEN + SPEED * distance + wait_time + FREQUENCY)
+    stat_wait_time.append(OPEN + SPEED * distance + wait_time)
 
     # Come in
     print (person.name + ' comes in Elevator %d at %d' % (elevator.id, env.now))
@@ -161,7 +164,6 @@ def elevator_process(env):
 
 for i in range(NUM_PEOPLE):
     env.process(elevator_process(env))
-
 env.run(until=1200)
 
 stat_trip_time = np.array(stat_trip_time)
